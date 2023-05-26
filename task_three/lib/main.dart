@@ -12,6 +12,6 @@ Future<void> main() async {
   ]);
 
   setup();
-  injector.get<DataProvider>().init();
+  await injector.get<DataProvider>().init();
   runApp(const TaskApp());
 }

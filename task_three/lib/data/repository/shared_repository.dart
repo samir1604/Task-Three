@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:task_three/data/data_provider.dart';
 import 'package:task_three/features/auth/repository/auth_repository.dart';
 import 'package:task_three/model/user.dart';
@@ -37,13 +38,13 @@ class SharedRepository implements AuthRepository {
   }
 
   @override
-  Future<User?> getRegisteredUser() async {
+  User? getRegisteredUser() {
     return _getUser(signedUser);
   }
 
   User? _getUser(String key) {
     final jsonString = _data.read(key);
-    if (jsonString?.isEmpty ?? false) {
+    if (jsonString?.isEmpty ?? true) {
       return null;
     }
 
