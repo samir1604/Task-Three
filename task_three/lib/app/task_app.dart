@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_three/features/auth/views/login_page.dart';
+import 'package:task_three/features/auth/auth.dart';
 
 class TaskApp extends StatelessWidget {
   const TaskApp({super.key});
@@ -12,7 +12,12 @@ class TaskApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      initialRoute: 'login',
+      routes: {
+        'login': (_) => LoginPage(),
+        'signup': (_) => const SignUpPage(),
+        'home': (_) => const HomePage(),
+      },
     );
   }
 }
