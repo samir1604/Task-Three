@@ -1,9 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class PersistenceProvider {
-  PersistenceProvider._();
+class DataProvider {
+  DataProvider._();
 
-  static final _instance = PersistenceProvider._();
+  static final _instance = DataProvider._();
 
   static late SharedPreferences _preferences;
 
@@ -15,5 +15,7 @@ class PersistenceProvider {
 
   String? read(String key) => _preferences.getString(key);
 
-  static PersistenceProvider get instance => _instance;
+  bool containsKey(String key) => _preferences.containsKey(key);
+
+  static DataProvider get instance => _instance;
 }

@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_three/app/task_app.dart';
-import 'package:task_three/data/persistence_provider.dart';
+import 'package:task_three/data/data_provider.dart';
 import 'package:task_three/injection.dart';
 
 Future<void> main() async {
@@ -14,6 +14,6 @@ Future<void> main() async {
   ]);
 
   setup();
-  injector.get<PersistenceProvider>().init();
+  injector.get<DataProvider>().init();
   runApp(const TaskApp());
 }

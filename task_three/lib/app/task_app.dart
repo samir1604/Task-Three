@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:task_three/views/login_page.dart';
+import 'package:task_three/features/auth/views/login_page.dart';
 
 class TaskApp extends StatelessWidget {
   const TaskApp({super.key});
