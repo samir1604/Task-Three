@@ -15,9 +15,17 @@ class LoginController extends ChangeNotifier {
   User? _currentUser;
   User? get getRegisteredUser => _currentUser;
 
+  String _exceptionMessage = '';
+  String get exceptionMessage => _exceptionMessage;
+
   void getRegisterUser() {
     _currentUser = _repository.getRegisteredUser();
     _isUserAuthenticated = (_currentUser != null);
+    notifyListeners();
+  }
+
+  void signIn(String username, String password) {
+    _exceptionMessage = 'User name or password incorrect';
     notifyListeners();
   }
 }

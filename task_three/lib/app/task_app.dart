@@ -29,11 +29,12 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: Provider.of<LoginController>(context).isUserAuthenticated
+      initialRoute: Provider.of<LoginController>(context, listen: false)
+              .isUserAuthenticated
           ? 'home'
           : 'login',
       routes: {
-        'login': (_) => LoginPage(),
+        'login': (_) => const LoginPage(),
         'signup': (_) => const SignUpPage(),
         'home': (_) => const HomePage(),
       },
