@@ -27,9 +27,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Task Three',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(colorSchemeSeed: Colors.blue),
       initialRoute: Provider.of<UserController>(context, listen: false)
               .isUserAuthenticated
           ? Routes.home
