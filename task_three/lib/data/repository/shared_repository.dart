@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:task_three/data/data_provider.dart';
 import 'package:task_three/features/auth/repository/auth_repository.dart';
 import 'package:task_three/model/user.dart';
@@ -21,34 +19,44 @@ class SharedRepository implements AuthRepository {
   }
 
   @override
-  Future<User?> singIn(String username, String password) async {
-    final user = _getUser(username);
-
-    if (user == null) {
+  Future<User?> singIn(String username) async {
+    if (!_data.containsKey(username)) {
       return null;
     }
 
+    final jsonString = _data.read(username);
+    if (jsonString == null) {
+      return null;
+    }
+
+    final user = User.fromJson(jsonDecode(jsonString));
     await _data.register(signedUser, user.username);
     return user;
   }
 
   @override
-  Future<void> singOut(String username) async {
+  Future<void> singOut() async {
     await _data.register(signedUser, '');
   }
 
   @override
   User? getRegisteredUser() {
-    return _getUser(signedUser);
-  }
-
-  User? _getUser(String key) {
-    final jsonString = _data.read(key);
-    if (jsonString?.isEmpty ?? true) {
+    final userKey = _data.read(signedUser);
+    if (userKey?.isEmpty ?? true) {
       return null;
     }
 
-    final user = User.fromJson(jsonDecode(jsonString!));
+    final jsonString = _data.read(userKey!);
+    if (jsonString == null) {
+      return null;
+    }
+
+    final user = User.fromJson(jsonDecode(jsonString));
     return user;
+  }
+
+  @override
+  Future<void> clearRegistered() async {
+    await _data.clearRegister();
   }
 }

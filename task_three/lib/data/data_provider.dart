@@ -17,5 +17,7 @@ class DataProvider {
 
   bool containsKey(String key) => _preferences.containsKey(key);
 
+  Future<void> clearRegister() => _preferences.clear();
+
   static DataProvider get instance => _instance;
 }

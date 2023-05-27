@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_three/features/auth/auth.dart';
 import 'package:task_three/features/auth/utils/message_extensions.dart';
+import 'package:task_three/routes.dart';
+import 'package:task_three/theme/app_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,33 +25,44 @@ class _LoginPageState extends State<LoginPage> {
 
   final _obscurePassword = ValueNotifier<bool>(true);
 
-  late LoginController _loginController;
+  late UserController _controller;
 
   @override
   void initState() {
     super.initState();
-    _loginController = Provider.of<LoginController>(context, listen: false);
-    _loginController.addListener(showMessage);
+    _controller = Provider.of<UserController>(context, listen: false);
+    _controller.addListener(onStateChange);
   }
 
   @override
   void dispose() {
-    _loginController.removeListener(showMessage);
+    _controller.removeListener(onStateChange);
     super.dispose();
   }
 
-  void showMessage() {
-    context.showMessage(_loginController.exceptionMessage);
+  void onStateChange() {
+    _controller.state.whenOrNull(
+      login: (user) {
+        if (user != null) {
+          Navigator.pushNamed(context, Routes.home);
+        }
+      },
+      signUp: (user) {
+        if (user != null) {
+          context.showMessage('User successfully registered');
+        }
+      },
+      error: (message) => context.showMessage(message),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final sizeHeight = MediaQuery.of(context).size.height;
-
-    context.watch<LoginController>().exceptionMessage;
+    final loginController = Provider.of<UserController>(context);
 
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
@@ -58,10 +71,10 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 SizedBox(height: sizeHeight * .05),
-                const Icon(
+                Icon(
                   Icons.supervised_user_circle_rounded,
                   size: 200,
-                  color: Colors.white,
+                  color: AppColors.textColor,
                 ),
                 SizedBox(height: sizeHeight * .1),
                 Padding(
@@ -76,22 +89,34 @@ class _LoginPageState extends State<LoginPage> {
                           child: Column(
                             children: <Widget>[
                               const SizedBox(height: 15),
-                              const Text(
-                                'Initial Session',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
+                              if (loginController.state is AuthStateLoading)
+                                const SizedBox(
+                                    height: 21,
+                                    width: 21,
+                                    child: CircularProgressIndicator())
+                              else
+                                Text(
+                                  'Initial Session',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: AppColors.backgroundColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
                                 ),
-                              ),
                               const SizedBox(height: 15),
                               TextFormField(
                                 controller: _usernameCtrl,
                                 keyboardType: TextInputType.name,
                                 focusNode: _userFocus,
+                                readOnly:
+                                    loginController.state is AuthStateLoading,
                                 onFieldSubmitted: (_) => FocusScope.of(context)
                                     .requestFocus(_passwordFocus),
+                                validator: (value) =>
+                                    value == null || value.isEmpty
+                                        ? 'User name must be valid name'
+                                        : null,
                                 decoration: const InputDecoration(
                                   labelText: 'User',
                                   hintText: 'Enter user name',
@@ -107,6 +132,12 @@ class _LoginPageState extends State<LoginPage> {
                                     obscureText: value,
                                     obscuringCharacter: '*',
                                     focusNode: _passwordFocus,
+                                    readOnly: loginController.state
+                                        is AuthStateLoading,
+                                    validator: (value) =>
+                                        value == null || value.isEmpty
+                                            ? 'Password must be valid'
+                                            : null,
                                     decoration: InputDecoration(
                                       labelText: 'Password',
                                       hintText: 'Enter password',
@@ -126,30 +157,62 @@ class _LoginPageState extends State<LoginPage> {
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
-                                    style: const ButtonStyle(
-                                        backgroundColor:
-                                            MaterialStatePropertyAll<Color>(
-                                                Colors.blue)),
-                                    child: const Text(
-                                      'Log In',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    onPressed: () {
-                                      Provider.of<LoginController>(context,
-                                              listen: false)
-                                          .signIn('', '');
-                                    }),
+                                  style: const ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStatePropertyAll<Color>(
+                                              Colors.blue)),
+                                  onPressed: loginController.state
+                                          is AuthStateLoading
+                                      ? null
+                                      : () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            Provider.of<UserController>(context,
+                                                    listen: false)
+                                                .signIn(_usernameCtrl.text,
+                                                    _passwordCtrl.text);
+                                          }
+                                        },
+                                  child: const Text(
+                                    'Log In',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 3),
                               const Divider(color: Colors.blue),
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
-                                    child: const Text(
-                                      'Or Create an Account',
-                                    ),
-                                    onPressed: () {}),
+                                  onPressed:
+                                      loginController.state is AuthStateLoading
+                                          ? null
+                                          : () async {
+                                              final result =
+                                                  await Navigator.pushNamed(
+                                                      context, Routes.signup);
+
+                                              final signUpData =
+                                                  result as Map<String, String>;
+                                              _usernameCtrl.text =
+                                                  signUpData['username'] ?? '';
+                                              _passwordCtrl.text =
+                                                  signUpData['password'] ?? '';
+                                            },
+                                  child: const Text(
+                                    'Or Create an Account',
+                                  ),
+                                ),
                               ),
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                    onPressed: () =>
+                                        Provider.of<UserController>(context,
+                                                listen: false)
+                                            .clear(),
+                                    child: const Text('Clear')),
+                              )
                             ],
                           ),
                         ),

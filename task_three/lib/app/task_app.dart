@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:task_three/features/auth/auth.dart';
 import 'package:task_three/injection.dart';
+import 'package:task_three/routes.dart';
 
 class TaskApp extends StatelessWidget {
   const TaskApp({super.key});
@@ -11,7 +12,7 @@ class TaskApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => LoginController(injector.get<AuthRepository>()))
+            create: (_) => UserController(injector.get<AuthRepository>()))
       ],
       child: const MainApp(),
     );
@@ -29,14 +30,14 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: Provider.of<LoginController>(context, listen: false)
+      initialRoute: Provider.of<UserController>(context, listen: false)
               .isUserAuthenticated
-          ? 'home'
-          : 'login',
+          ? Routes.home
+          : Routes.login,
       routes: {
-        'login': (_) => const LoginPage(),
-        'signup': (_) => const SignUpPage(),
-        'home': (_) => const HomePage(),
+        Routes.login: (_) => const LoginPage(),
+        Routes.signup: (_) => SignUpPage(),
+        Routes.home: (_) => const HomePage(),
       },
     );
   }
