@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:task_three/app/task_app.dart';
-import 'package:task_three/data/data_provider.dart';
+//import 'package:task_three/data/data_provider.dart';
 import 'package:task_three/injection.dart';
 
 Future<void> main() async {
@@ -11,7 +11,7 @@ Future<void> main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  setup();
-  await injector.get<DataProvider>().init();
+  await setupInjector();
+  //await injector.get<DataProvider>().init();
   runApp(const TaskApp());
 }

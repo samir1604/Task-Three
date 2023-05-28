@@ -1,13 +1,15 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DataProvider {
-  DataProvider._();
+  DataProvider(this._preferences);
+  final SharedPreferences _preferences;
+  //DataProvider._();
 
-  static final _instance = DataProvider._();
+  //static final _instance = DataProvider._();
 
-  static late SharedPreferences _preferences;
+  //static late SharedPreferences _preferences;
 
-  Future init() async => _preferences = await SharedPreferences.getInstance();
+  //Future init() async => _preferences = await SharedPreferences.getInstance();
 
   Future<void> register(String key, String data) async {
     await _preferences.setString(key, data);
@@ -19,5 +21,5 @@ class DataProvider {
 
   Future<void> clearRegister() => _preferences.clear();
 
-  static DataProvider get instance => _instance;
+  //static DataProvider get instance => _instance;
 }

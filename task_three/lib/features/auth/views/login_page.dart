@@ -23,6 +23,8 @@ class _LoginPageState extends State<LoginPage> {
 
   final _passwordFocus = FocusNode();
 
+  final _buttonFocus = FocusNode();
+
   final _obscurePassword = ValueNotifier<bool>(true);
 
   late UserController _controller;
@@ -44,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     _controller.state.whenOrNull(
       login: (user) {
         if (user != null) {
-          Navigator.pushNamed(context, Routes.home);
+          Navigator.pushNamedAndRemoveUntil(context, Routes.home, (_) => false);
         }
       },
       signUp: (user) {
@@ -143,7 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                                               ? 'Password must be valid'
                                               : null,
                                       onFieldSubmitted: (_) =>
-                                          FocusScope.of(context).unfocus(),
+                                          FocusScope.of(context)
+                                              .requestFocus(_buttonFocus),
                                       decoration: InputDecoration(
                                         labelText: 'Password',
                                         hintText: 'Enter password',
@@ -163,6 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                                 SizedBox(
                                   width: double.infinity,
                                   child: OutlinedButton(
+                                    focusNode: _buttonFocus,
                                     style: const ButtonStyle(
                                         backgroundColor:
                                             MaterialStatePropertyAll<Color>(

@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
@@ -52,6 +53,7 @@ class HomePage extends StatelessWidget {
       body: SafeArea(
           child: SizedBox(
         width: double.infinity,
+        height: sizeHeight,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

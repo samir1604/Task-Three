@@ -31,12 +31,14 @@ class UserController extends ChangeNotifier {
       final user = await _repository.singIn(username);
 
       if (user?.password != password) {
+        _currentUser = null;
         state = const AuthState.error('User name or password are not valid');
       } else {
         _currentUser = user;
         state = AuthState.login(user);
       }
     } catch (e) {
+      _currentUser = null;
       state = AuthState.error(e.toString());
     }
     notifyListeners();
