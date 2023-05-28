@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.task_three">
    <application
-        android:label="task_three"
+        android:label="TaskLogin"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
